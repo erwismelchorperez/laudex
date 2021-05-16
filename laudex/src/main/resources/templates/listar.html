@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+    <head>
+        <title>Menú</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/solid.css">
+        <script src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+        <link rel="stylesheet" type="text/css" href="static/css/w3.css" th:href="@{/css/w3.css}">
+    </head>
+    <body>
+      <div class="w3-container">
+        <div class="w3-bar">
+          <div class="w3-bar-item w3-button">
+            <a class="" aria-current="page" th:href="@{/menu}" href="#">Inicio</a>
+          </div>
+          <div class="w3-bar-item w3-button w3-orange">
+            <a class="" aria-current="page" th:href="@{/list}" href="#">Listar</a>
+          </div>
+          <div class="w3-bar-item w3-button w3-right">
+            <form th:action="@{/logout}" method="post">
+                <input type="submit" value="Cerrar Sesion"/>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="w3-container">
+        <a th:href="@{/agregar}" class="btn btn-primary">Nuevo</a>
+        <table class="w3-table-all w3-hoverable">
+          <thead>
+            <th><span>Nombre</span></th>
+            <th><span>Apellido Paterno</span></th>
+            <th><span>Apellido Materno</span></th>
+            <th><span>Email</span></th>
+            <th><span>Teléfono</span></th>
+            <th class="w3-center"><span>Acciones</span></th>
+          </thead>
+          <tbody>
+            <tr th:each="alum:${alumnos}">
+              <td>
+                <span th:text="${alum.nombre}"></span>
+              </td>
+              <td th:text="${alum.apaterno}"></td>
+              <td th:text="${alum.amaterno}"></td>
+              <!--<td th:text="${alum.fechanac}"></td>
+              <td th:text="${alum.gradoestudio}"></td>-->
+              <td th:text="${alum.email}"></td>
+              <td th:text="${alum.telefono}"></td>
+              <td>
+                <a class="btn btn-warning" th:href="@{/editar/}+${alum.id}">Edit</a>
+                <a class="btn btn-danger" th:onclick="eliminar([[${alum.id}]],[[${alum.nombre}]],[[${alum.apaterno}]],[[${alum.amaterno}]])">Delete</a>
+                <!--<a class="btn btn-danger" th:href="@{/delete/}+${alum.id}">Delete</a>-->
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+      <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+      <script type="text/javascript">
+        function eliminar(id,nombre,paterno,materno){
+          swal({
+            title: "Esta seguro de eliminar?" ,
+            text: ""+nombre+" "+ paterno + " " + materno,
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+          })
+          .then((OK) => {
+            if(OK){
+              $.ajax({
+                url:"/delete/"+id,
+                success: function(res){
+                  console.log(res);
+                }
+              });
+              swal("Registro eliminado!!! ",{
+                icon: "success",
+              }).then((OK)=>{
+                if(OK){
+                  location.href="/list";
+                }
+              });
+            }else{
+              swal("Registro no eliminado!!!");
+            }
+          });
+        }
+      </script>
+    </body>
+</html>
